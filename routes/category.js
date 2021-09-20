@@ -22,14 +22,14 @@ router.post(
 router.get('/category/:categoryId',getCategory);
 router.get('/categories',getAllCategories);
 router.put(
-    '/category/:categoryId',
+    '/category/:categoryId/:userId',
     isSignedIn,
     isAuthenticated,
     isAdmin,
     updateCategory
 );
 router.delete(
-    '/category/":categoryId/:userId',
+    '/category/:categoryId/:userId',
     isSignedIn,
     isAuthenticated,
     isAdmin,

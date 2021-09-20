@@ -23,7 +23,7 @@ exports.createCategory = (req,res) => {
                 error:"Not able to save category"
             });
         }
-        res.status(200).json(categoryItem);
+        res.status(200).json({category:{...categoryItem._doc}});
     });
 }
 
@@ -64,7 +64,7 @@ exports.updateCategory = (req,res) => {
 
 //delete a category
 exports.removeCategory = (req,res) => {
-    const cateogory = req.category;
+    const category = req.category;
     category.remove((err,deletedCategory) => {
         if(err){
             return res.status(400).json({
