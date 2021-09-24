@@ -121,11 +121,50 @@ exports.updateProduct = (req,res) => {
 }
 
 
-//middleware
+exports.getAllProducts = (req,res) => {
+    let limit = req.query.limit ? parseInt(req.query.limit) : 8
+    let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+    Product.find()
+        .select('-photo')
+        .populate('category')
+        .sort([[sortBy,"asc"]])
+        .limit(limit)
+        .exec((err,products)=>{
+            if(err || !products){
+                return res.status(400).json({
+                    error:"Not able to fetch products"
+                });
+            }
+            res.status(200).json(products);
+        });
+}
+
+
+//middlewares
 exports.photo = (req,res,next) => {
     if(req.product.photo.data){
         res.set("Content-type",req.product.photo.contentType);
         return res.send(req.product.photo.data);
     }
     next();
+}
+
+
+exports.updateStock = (req,res,next) => {
+    let myOperations = req.body.order.products.map(prod => {
+        return{
+            updateOne:{
+                filter:{_id:prod._id},
+                update:{$inc: {stock:-prod.count,sold:+prod.count}}
+            }
+        }
+    });
+    Product.bulkWrite(myOperations,{},(err,products)=>{
+        if(err){
+            res.status(400).json({
+                error:"Bulk operations failed"
+            });
+        }
+        next();
+    });
 }
