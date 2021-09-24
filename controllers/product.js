@@ -140,6 +140,18 @@ exports.getAllProducts = (req,res) => {
 }
 
 
+exports.getAllUniqueCategories = (req,res) => {
+    Product.distinct("category",{},(err,categories) => {
+        if(err){
+            return res.status(400).json({
+                error:"No Category found"
+            });
+        }
+        res.status(200).json(categories);
+    });
+}
+
+
 //middlewares
 exports.photo = (req,res,next) => {
     if(req.product.photo.data){
